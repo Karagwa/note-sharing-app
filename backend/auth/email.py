@@ -8,10 +8,10 @@ from typing import Optional
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
+
 load_dotenv()
 
-# Email configuration from environment variables
+
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "")
@@ -40,32 +40,32 @@ def send_email(
         bool: True if email sent successfully, False otherwise
     """
     
-    # Check if SMTP is configured
+    
     if not SMTP_USER or not SMTP_PASSWORD:
-        print("⚠️  SMTP not configured. Email would be sent to:", to_email)
-        print("📧 Subject:", subject)
-        print("📝 Content:", text_content or "HTML content")
+        print("SMTP not configured. Email would be sent to:", to_email)
+        print("Subject:", subject)
+        print("Content:", text_content or "HTML content")
         return False
     
     try:
-        # Create message
+        
         message = MIMEMultipart("alternative")
         message["Subject"] = subject
         message["From"] = f"{SMTP_FROM_NAME} <{SMTP_FROM_EMAIL}>"
         message["To"] = to_email
         
-        # Add plain text version
+        
         if text_content:
             text_part = MIMEText(text_content, "plain")
             message.attach(text_part)
         
-        # Add HTML version
+        
         html_part = MIMEText(html_content, "html")
         message.attach(html_part)
         
-        # Connect to SMTP server and send
+        
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()  # Upgrade to secure connection
+            server.starttls()  
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.send_message(message)
         

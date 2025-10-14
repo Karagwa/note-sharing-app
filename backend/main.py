@@ -4,6 +4,10 @@ from backend.database import create_db_and_tables
 from backend.routes.notes import router as notes_router
 from backend.routes.auth import router as auth_router
 from backend.routes.share import router as sharing_router
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = FastAPI(
     title="Note Sharing API",
@@ -11,16 +15,16 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS Configuration - MUST be before route includes
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
+        os.getenv("FRONTEND_URL", "http://localhost:3000"),
+        os.getenv("FRONTEND_URL", "http://127.0.0.1:3000"),
     ],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods including OPTIONS
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],  
+    allow_headers=["*"],  
 )
 
 @app.on_event("startup")
@@ -37,7 +41,7 @@ def read_root():
     }
 
 
-# Include routers AFTER CORS middleware
+
 app.include_router(auth_router, prefix="/api/auth", tags=["authentication"])
 app.include_router(notes_router, prefix="/api", tags=["notes"])
 app.include_router(sharing_router, prefix="/api", tags=["sharing"])

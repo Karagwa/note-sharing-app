@@ -22,7 +22,7 @@ router = APIRouter()
 def register(user_data: UserCreate, session: Session = Depends(get_session)):
     """Register a new user"""
     
-    # Check if username already exists
+    
     statement = select(User).where(User.username == user_data.username)
     existing_user = session.exec(statement).first()
     if existing_user:
@@ -31,7 +31,7 @@ def register(user_data: UserCreate, session: Session = Depends(get_session)):
             detail="Username already registered"
         )
     
-    # Check if email already exists
+    
     statement = select(User).where(User.email == user_data.email)
     existing_email = session.exec(statement).first()
     if existing_email:
@@ -40,7 +40,7 @@ def register(user_data: UserCreate, session: Session = Depends(get_session)):
             detail="Email already registered"
         )
     
-    # Create new user
+    
     user = User(
         username=user_data.username,
         email=user_data.email,
@@ -52,7 +52,7 @@ def register(user_data: UserCreate, session: Session = Depends(get_session)):
     session.commit()
     session.refresh(user)
     
-    # Send welcome email (async in background)
+
     try:
         send_welcome_email(user.email, user.username)
     except Exception as e:
@@ -125,21 +125,21 @@ def change_password(
 ):
     """Change password for authenticated user"""
     
-    # Verify current password
+    
     if not verify_password(password_data.current_password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Current password is incorrect"
         )
     
-    # Check if new password is different from current
+    
     if verify_password(password_data.new_password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="New password must be different from current password"
         )
     
-    # Update password
+   
     current_user.hashed_password = get_password_hash(password_data.new_password)
     session.add(current_user)
     session.commit()
@@ -154,18 +154,18 @@ def forgot_password(
 ):
     """Request password reset - generates reset token"""
     
-    # Find user by email
+    
     statement = select(User).where(User.email == password_reset.email)
     user = session.exec(statement).first()
     
-    # Always return success (security: don't reveal if email exists)
+    
     if not user:
         return {
             "ok": True,
             "message": "If the email exists, a reset link has been sent"
         }
     
-    # Generate reset token
+    
     reset_token = secrets.token_urlsafe(32)
     user.reset_token = reset_token
     user.reset_token_expires = datetime.utcnow() + timedelta(hours=1)
@@ -173,17 +173,17 @@ def forgot_password(
     session.add(user)
     session.commit()
     
-    # Send password reset email
+    
     try:
         email_sent = send_password_reset_email(user.email, reset_token, user.username)
         if email_sent:
-            print(f"✅ Password reset email sent to {user.email}")
+            print(f"Password reset email sent to {user.email}")
         else:
-            print(f"⚠️  Email not configured. Password reset link:")
+            print(f"Email not configured. Password reset link:")
             print(f"   http://localhost:3000/reset-password?token={reset_token}")
     except Exception as e:
-        print(f"❌ Failed to send password reset email: {e}")
-        # Still show the link in console for development
+        print(f"Failed to send password reset email: {e}")
+       
         print(f"   Reset Link: http://localhost:3000/reset-password?token={reset_token}")
     
     return {
@@ -199,7 +199,7 @@ def reset_password(
 ):
     """Reset password using reset token"""
     
-    # Find user by reset token
+    
     statement = select(User).where(User.reset_token == reset_data.token)
     user = session.exec(statement).first()
     
@@ -209,14 +209,14 @@ def reset_password(
             detail="Invalid or expired reset token"
         )
     
-    # Check if token is expired
+    
     if user.reset_token_expires and user.reset_token_expires < datetime.utcnow():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Reset token has expired"
         )
     
-    # Update password
+    
     user.hashed_password = get_password_hash(reset_data.new_password)
     user.reset_token = None
     user.reset_token_expires = None

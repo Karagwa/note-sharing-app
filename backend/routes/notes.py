@@ -20,10 +20,10 @@ def search_notes(
     Search notes by title or content
     Case-insensitive search across title and content fields
     """
-    # Create search pattern
+    
     search_pattern = f"%{q}%"
     
-    # Search in both title and content (case-insensitive)
+    
     statement = select(Note).where(
         Note.owner_id == current_user.id,
         or_(
@@ -58,7 +58,7 @@ def read_note(
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
     
-    # Check ownership
+    
     if note.owner_id != current_user.id:
         raise HTTPException(
             status_code=403, 
@@ -92,7 +92,7 @@ def create_note(
 @router.put("/notes/{note_id}", response_model=NoteResponse)
 def update_note(
     note_id: int, 
-    note_data: NoteCreate,  # Changed from NoteUpdate for full replacement
+    note_data: NoteCreate,  
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
@@ -101,14 +101,14 @@ def update_note(
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
     
-    # Check ownership
+    
     if note.owner_id != current_user.id:
         raise HTTPException(
             status_code=403, 
             detail="Not authorized to edit this note"
         )
     
-    # Replace all fields
+    
     note.title = note_data.title
     note.content = note_data.content
     note.is_public = note_data.is_public
@@ -132,14 +132,14 @@ def patch_note(
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
     
-    # Check ownership
+    
     if note.owner_id != current_user.id:
         raise HTTPException(
             status_code=403, 
             detail="Not authorized to edit this note"
         )
     
-    # Update only provided fields
+    
     update_data = note_data.model_dump(exclude_unset=True)
     
     if update_data:
@@ -166,7 +166,7 @@ def delete_note(
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
     
-    # Check ownership
+    
     if note.owner_id != current_user.id:
         raise HTTPException(
             status_code=403, 

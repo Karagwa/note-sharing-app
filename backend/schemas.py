@@ -5,8 +5,6 @@ from pydantic import EmailStr, field_validator
 import re
 
 
-# ============= User/Auth Schemas =============
-
 class UserBase(SQLModel):
     """Base user schema"""
     username: str = Field(min_length=3, max_length=50)
@@ -117,7 +115,7 @@ class NoteWithOwner(NoteResponse):
     owner: UserResponse
 
 
-# ============= Sharing Schemas =============
+
 
 class ShareLinkResponse(SQLModel):
     """Response with shareable link"""

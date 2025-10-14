@@ -7,10 +7,12 @@ from backend.database import get_session
 from backend.models import Note, User
 from backend.schemas import ShareLinkResponse, SharedNoteResponse, NoteResponse
 from backend.auth.security import get_current_user
+from dotenv import load_dotenv
+import os
 
 router = APIRouter()
 
-
+load_dotenv()
 @router.post("/notes/{note_id}/share", response_model=ShareLinkResponse)
 def generate_share_link(
     note_id: int,
@@ -25,22 +27,22 @@ def generate_share_link(
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
     
-    # Check ownership - only owner can generate share links
+    
     if note.owner_id != current_user.id:
         raise HTTPException(
             status_code=403,
             detail="Only the note owner can generate share links"
         )
     
-    # Generate unique token if not exists
+    
     if not note.share_token:
         note.share_token = secrets.token_urlsafe(16)
         session.add(note)
         session.commit()
         session.refresh(note)
     
-    # Build share URL (adjust to your frontend URL)
-    base_url = "http://localhost:3000"  # Change to your frontend URL
+    
+    base_url = os.getenv("FRONTEND_URL", "http://localhost:3000")  
     share_url = f"{base_url}/shared/{note.share_token}"
     
     return ShareLinkResponse(
@@ -91,7 +93,7 @@ def revoke_share_link(
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
     
-    # Check ownership
+    
     if note.owner_id != current_user.id:
         raise HTTPException(
             status_code=403,
@@ -104,7 +106,7 @@ def revoke_share_link(
             detail="This note doesn't have an active share link"
         )
     
-    # Remove the share token
+   
     note.share_token = None
     session.add(note)
     session.commit()
@@ -126,7 +128,7 @@ def get_share_info(
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
     
-    # Check ownership
+    
     if note.owner_id != current_user.id:
         raise HTTPException(
             status_code=403,
@@ -140,7 +142,7 @@ def get_share_info(
         )
     
     # Build share URL
-    base_url = "http://localhost:3000"
+    base_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
     share_url = f"{base_url}/shared/{note.share_token}"
     
     return ShareLinkResponse(
