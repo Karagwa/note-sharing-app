@@ -9,6 +9,8 @@ import Register from './components/Auth/Register';
 import NoteList from './components/Notes/NoteList';
 import NoteEditor from './components/Notes/NoteEditor';
 import SharedNote from './components/Shared/SharedNote';
+import ForgotPassword from './components/Auth/ForgotPassword';
+import ResetPassword from './components/Auth/ResetPassword';
 import './App.css';
 
 const queryClient = new QueryClient();
@@ -42,7 +44,8 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/shared/:token" element={<SharedNote />} />
-
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 {/* Protected Routes */}
                 <Route
                   path="/notes"

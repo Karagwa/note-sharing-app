@@ -67,7 +67,7 @@ const NoteEditor = () => {
       } else {
         await notesAPI.createNote(formData);
       }
-      navigate('/');
+      navigate('/notes');
     } catch (error) {
       console.error('Failed to save note:', error);
       setError(error.response?.data?.detail || 'Failed to save note');

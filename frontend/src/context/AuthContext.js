@@ -60,13 +60,13 @@ export const AuthProvider = ({ children }) => {
         password: userData.password
       });
 
-      const { access_token, user: userData } = loginResponse.data;
+      const { access_token, user: loggedInUser } = loginResponse.data;
 
       localStorage.setItem('token', access_token);
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(loggedInUser));
 
       setToken(access_token);
-      setUser(userData);
+      setUser(loggedInUser);
 
       return { success: true };
     } catch (error) {

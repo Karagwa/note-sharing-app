@@ -13,6 +13,7 @@ from backend.auth.security import (
     get_password_hash, verify_password, create_access_token,
     get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES
 )
+from backend.auth.email import send_password_reset_email, send_welcome_email
 
 router = APIRouter()
 
@@ -51,6 +52,12 @@ def register(user_data: UserCreate, session: Session = Depends(get_session)):
     session.commit()
     session.refresh(user)
     
+    # Send welcome email (async in background)
+    try:
+        send_welcome_email(user.email, user.username)
+    except Exception as e:
+        print(f"Failed to send welcome email: {e}")
+    
     return user
 
 
@@ -64,11 +71,11 @@ def login(
     OAuth2 compatible - accepts form data with 'username' and 'password'
     """
     
-    # Find user by username
+    
     statement = select(User).where(User.username == form_data.username)
     user = session.exec(statement).first()
     
-    # Verify user exists and password is correct
+    
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -76,14 +83,14 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Check if user is active
+   
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User account is inactive"
         )
     
-    # Create access token
+    
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username, "user_id": user.id},
@@ -166,15 +173,18 @@ def forgot_password(
     session.add(user)
     session.commit()
     
-    # TODO: Send email with reset link
-    # For development, print to console
-    print(f"\n{'='*60}")
-    print(f"PASSWORD RESET REQUEST")
-    print(f"{'='*60}")
-    print(f"Email: {user.email}")
-    print(f"Reset Token: {reset_token}")
-    print(f"Reset Link: http://localhost:3000/reset-password?token={reset_token}")
-    print(f"{'='*60}\n")
+    # Send password reset email
+    try:
+        email_sent = send_password_reset_email(user.email, reset_token, user.username)
+        if email_sent:
+            print(f"✅ Password reset email sent to {user.email}")
+        else:
+            print(f"⚠️  Email not configured. Password reset link:")
+            print(f"   http://localhost:3000/reset-password?token={reset_token}")
+    except Exception as e:
+        print(f"❌ Failed to send password reset email: {e}")
+        # Still show the link in console for development
+        print(f"   Reset Link: http://localhost:3000/reset-password?token={reset_token}")
     
     return {
         "ok": True,

@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
-from typing import List
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlmodel import Session, select, or_, col
+from typing import List, Optional
 from datetime import datetime
 from backend.database import get_session
 from backend.models import Note, User
@@ -8,6 +8,32 @@ from backend.schemas import NoteCreate, NoteUpdate, NoteResponse
 from backend.auth.security import get_current_user
 
 router = APIRouter()
+
+
+@router.get("/notes/search", response_model=List[NoteResponse])
+def search_notes(
+    q: str = Query(..., min_length=1, description="Search query"),
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Search notes by title or content
+    Case-insensitive search across title and content fields
+    """
+    # Create search pattern
+    search_pattern = f"%{q}%"
+    
+    # Search in both title and content (case-insensitive)
+    statement = select(Note).where(
+        Note.owner_id == current_user.id,
+        or_(
+            col(Note.title).ilike(search_pattern),
+            col(Note.content).ilike(search_pattern)
+        )
+    )
+    
+    notes = session.exec(statement).all()
+    return notes
 
 
 @router.get("/notes", response_model=List[NoteResponse])
@@ -53,7 +79,7 @@ def create_note(
         title=note_data.title,
         content=note_data.content,
         is_public=note_data.is_public,
-        owner_id=current_user.id,  # Link to authenticated user
+        owner_id=current_user.id,  
         created_at=datetime.utcnow()
     )
     

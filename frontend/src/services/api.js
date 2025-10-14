@@ -60,6 +60,7 @@ export const authAPI = {
 // Notes API
 export const notesAPI = {
   getNotes: () => api.get('/notes'),
+  searchNotes: (query) => api.get(`/notes/search?q=${encodeURIComponent(query)}`),
   getNote: (id) => api.get(`/notes/${id}`),
   createNote: (data) => api.post('/notes', data),
   updateNote: (id, data) => api.put(`/notes/${id}`, data),
