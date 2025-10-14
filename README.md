@@ -7,9 +7,9 @@ A  full-stack note-sharing application built with FastAPI backend and React fron
 ![React](https://img.shields.io/badge/react-18.0+-61dafb.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)
 
-## ✨ Features
+##  Features
 
-### 🔐 Authentication & Security
+###  Authentication & Security
 - User registration with email validation
 - Secure login with JWT tokens
 - Password hashing with bcrypt
@@ -17,7 +17,7 @@ A  full-stack note-sharing application built with FastAPI backend and React fron
 - Password reset functionality
 - Session management
 
-### 📝 Note Management
+###  Note Management
 - **Create** notes with rich text content
 - **Read** and view all your notes
 - **Update** existing notes
@@ -25,14 +25,14 @@ A  full-stack note-sharing application built with FastAPI backend and React fron
 - Real-time note editing
 - Automatic timestamps (created & updated)
 
-### 🔗 Note Sharing
+###  Note Sharing
 - Generate unique shareable links
 - Public note viewing without authentication
 - Token-based access control
 - Share notes with anyone via URL
 - Revoke share access anytime
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Backend
 - **FastAPI** - Modern Python web framework
@@ -53,14 +53,14 @@ A  full-stack note-sharing application built with FastAPI backend and React fron
 - **Lucide React** - Beautiful icons
 - **CSS3** - Custom styling with gradients
 
-## 📋 Prerequisites
+##  Prerequisites
 
 - **Python** 3.10 not 3.13 due to incompatibility with auth dependencies like bcrypt
 - **Node.js** 16 or higher
 - **npm** or **yarn**
 - **Git**
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Clone the Repository
 
@@ -126,7 +126,7 @@ npm start
 
 Frontend will run on: **http://localhost:3000**
 
-## 📚 API Documentation
+##  API Documentation
 
 Once the backend is running, you can access interactive API documentation:
 
@@ -157,7 +157,7 @@ Once the backend is running, you can access interactive API documentation:
 - `DELETE /api/notes/{id}/share` - Revoke share access
 - `GET /api/notes/{id}/share` - Get share info
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 note-sharing-app/
@@ -215,7 +215,7 @@ note-sharing-app/
 └── README.md
 ```
 
-## 🔧 Configuration
+##  Configuration
 
 ### Environment Variables
 
@@ -248,7 +248,7 @@ Or use OpenSSL:
 openssl rand -hex 32
 ```
 
-## 💡 Usage Guide
+##  Usage Guide
 
 ### 1. Register an Account
 - Navigate to http://localhost:3000/register
@@ -276,7 +276,7 @@ openssl rand -hex 32
 - No login required for viewing shared notes
 
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -286,34 +286,21 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License.
 
-## 🐛 Known Issues
+##  Known Issues
 
-- None at the moment! 🎉
+- None at the moment! 
 
-## 🔮 Future Enhancements
 
-- [ ] Rich text editor (Markdown/WYSIWYG)
-- [ ] Note categories and tags
-- [ ] Advanced search and filters
-- [ ] Note collaboration (real-time editing)
-- [ ] Export notes (PDF, Markdown, HTML)
-- [ ] Dark mode toggle
-- [ ] Email notifications
-- [ ] User profiles with avatars
-- [ ] Note version history
-- [ ] Mobile app (React Native)
-- [ ] File attachments
-- [ ] Note templates
 
-## 📧 Support
+## Support
 
 If you have any questions or need help, please open an issue on GitHub.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [FastAPI](https://fastapi.tiangolo.com/) - Amazing Python web framework
 - [React](https://reactjs.org/) - The best UI library
@@ -321,7 +308,7 @@ If you have any questions or need help, please open an issue on GitHub.
 - [Lucide Icons](https://lucide.dev/) - Beautiful icon set
 - Inspiration from Notion, Evernote, and Google Keep
 
-## 🌟 Star History
+## Star History
 
 If you find this project useful, please consider giving it a star ⭐
 
@@ -329,4 +316,4 @@ If you find this project useful, please consider giving it a star ⭐
 
 **Made with ❤️ by [Karagwa](https://github.com/Karagwa)**
 
-*Happy Note Taking! 📝✨*
+*Happy Note Taking! *
