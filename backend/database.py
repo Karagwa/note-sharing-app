@@ -1,7 +1,8 @@
 import os
-from sqlmodel import create_engine, Session
+from sqlmodel import create_engine, Session, SQLModel
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+print("🔥 NEW DEPLOYMENT ACTIVE 🔥")
 
 engine = create_engine(
     DATABASE_URL,
