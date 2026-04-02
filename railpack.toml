@@ -1,2 +1,2 @@
 [build]
-nixpkgs = ["postgresql"]
+packages = ["postgresql"]
