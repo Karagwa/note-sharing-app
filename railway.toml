@@ -1,0 +1,6 @@
+[build]
+builder = "railpack"
+buildCommand = "pip install -r requirements.txt"
+
+[build.nixpacks]
+packages = ["postgresql"]
