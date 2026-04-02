@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import hashlib
+import base64
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session, select
@@ -17,8 +19,13 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")    
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def _normalize_password(password: str) -> bytes:
+    """
+    Pre-hash user input before bcrypt to avoid bcrypt's 72-byte input limit.
+    """
+    digest = hashlib.sha256(password.encode("utf-8")).digest()
+    return base64.b64encode(digest)
 
 # OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -26,12 +33,24 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+    normalized = _normalize_password(plain_password)
+    hashed_bytes = hashed_password.encode("utf-8")
+
+    # Preferred verification path for new hashes created with normalized input.
+    if bcrypt.checkpw(normalized, hashed_bytes):
+        return True
+
+    # Backward compatibility for legacy hashes generated from raw password bytes.
+    try:
+        return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_bytes)
+    except ValueError:
+        return False
 
 
 def get_password_hash(password: str) -> str:
     """Hash a password"""
-    return pwd_context.hash(password)
+    normalized = _normalize_password(password)
+    return bcrypt.hashpw(normalized, bcrypt.gensalt()).decode("utf-8")
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
