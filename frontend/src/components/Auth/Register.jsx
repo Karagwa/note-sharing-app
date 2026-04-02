@@ -52,33 +52,78 @@ const Register = () => {
     return true;
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError('');
+
+  //   if (!validateForm()) {
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   const result = await register({
+  //     username: formData.username,
+  //     email: formData.email,
+  //     password: formData.password,
+  //   });
+
+  //   if (result.success) {
+  //     setSuccess(true);
+  //     setTimeout(() => {
+  //       navigate('/notes');
+  //     }, 2000);
+  //   } else {
+  //     setError(result.error);
+  //   }
+
+  //   setLoading(false);
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    if (!validateForm()) {
-      setLoading(false);
-      return;
-    }
+  if (!validateForm()) {
+    setLoading(false);
+    return;
+  }
 
+  try {
     const result = await register({
       username: formData.username,
       email: formData.email,
       password: formData.password,
     });
 
-    if (result.success) {
+    // success case
+    if (result?.success !== false) {
       setSuccess(true);
       setTimeout(() => {
         navigate('/notes');
       }, 2000);
-    } else {
-      setError(result.error);
     }
 
-    setLoading(false);
-  };
+  } catch (error) {
+    console.log("FULL ERROR:", error.response?.data);
+
+    // Extract FastAPI validation error properly
+    if (error.response?.data?.detail) {
+      const detail = error.response.data.detail;
+
+      if (Array.isArray(detail)) {
+        setError(detail[0].msg); // e.g. "Password must contain uppercase"
+      } else {
+        setError(detail);
+      }
+    } else {
+      setError("Something went wrong. Try again.");
+    }
+  }
+
+  setLoading(false);
+};
 
   if (success) {
     return (
