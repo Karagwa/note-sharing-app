@@ -9,4 +9,5 @@ python-multipart
 SQLAlchemy        
 sqlmodel          
 starlette         
-uvicorn           
+uvicorn 
+psycopg2-binary          

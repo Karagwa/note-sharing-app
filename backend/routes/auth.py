@@ -54,7 +54,8 @@ def register(user_data: UserCreate, session: Session = Depends(get_session)):
     
 
     try:
-        send_welcome_email(user.email, user.username)
+        #send_welcome_email(user.email, user.username)
+        print(f"Welcome email sent to {user.email}")
     except Exception as e:
         print(f"Failed to send welcome email: {e}")
     
